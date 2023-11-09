@@ -55,7 +55,7 @@ class TaxiFarePrediction(FlowSpec):
 
         # TODO: Play around with the model if you are feeling it.
         self.model = LinearRegression()
-
+        
         self.next(self.validate)
 
     def gather_sibling_flow_run_results(self):
