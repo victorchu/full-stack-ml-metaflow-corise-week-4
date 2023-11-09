@@ -2,7 +2,13 @@ from metaflow import FlowSpec, step, card, conda_base, project, IncludeFile, S3
 import pandas as pd
 
 
-@conda_base(libraries={"conda-forge::xgboost": '1.5.1', "conda-forge::scikit-learn": '1.1.2', "conda-forge::pandas": '1.4.2'})
+@conda_base(
+    libraries={
+        "conda-forge::xgboost": '1.5.1',
+        "conda-forge::scikit-learn": '1.1.2',
+        "conda-forge::pandas": '1.4.2'
+    }
+)
 @project(name="titanic_survival_prediction")
 class TitanicSurvivalPredictor(FlowSpec):
     """

@@ -32,11 +32,14 @@ class TitanicSurvivalPredictor(FlowSpec):
         import pandas as pd
         from sklearn.metrics import accuracy_score
 
+        # Dummy prediction --- always 0
+        # Yet, where is the model?
         self.df["preds"] = 0
         self.score = accuracy_score(self.df["Survived"], self.df["preds"])
 
         self.next(self.end)
 
+    @card
     @step
     def end(self):
         """
