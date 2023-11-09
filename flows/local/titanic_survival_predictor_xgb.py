@@ -39,11 +39,9 @@ class TitanicSurvivalPredictor(FlowSpec):
 
     @step
     def predict(self):
-
         """
         make predictions
         """
-
         import xgboost as xgb
         from sklearn.model_selection import train_test_split
         from sklearn.metrics import accuracy_score
@@ -52,8 +50,14 @@ class TitanicSurvivalPredictor(FlowSpec):
         self.cols = features.columns
         train_features, test_features, train_labels, test_labels = train_test_split(features, labels, test_size=0.2, random_state=42)
 
-        self.model = xgb.XGBClassifier(max_depth=self.max_depth, eta=self.eta, objective='binary:logistic', nthread=8, eval_metric='auc', use_label_encoder=False)
+        # Create and fit (train) the model
+        # The model will be saved in S3, accessible from the server.
+        self.model = xgb.XGBClassifier(max_depth=self.max_depth, eta=self.eta,
+                                       objective='binary:logistic', nthread=8, 
+                                       eval_metric='auc', use_label_encoder=False)
         self.model.fit(train_features, train_labels, early_stopping_rounds=5, eval_set=[(test_features, test_labels)])
+
+        # Measure the accuracy score
         self.preds = self.model.predict(test_features)
         self.score = accuracy_score(test_labels, self.preds)
 
@@ -65,7 +69,10 @@ class TitanicSurvivalPredictor(FlowSpec):
         End of flow!
         """
         self.model_type = "xgboost"
-        print("Score = %s" % self.score)
+        print(f"model_type = {self.model_type}")
+        print(f"Accuracy score = {self.score}")
+
 
 if __name__ == "__main__":
     TitanicSurvivalPredictor()
+

@@ -15,7 +15,7 @@ api = FastAPI()
 # How to respond to HTTP GET at / route.
 @api.get("/")
 def root():
-    return {"message": "Hello there!"}
+    return {"message": "Hello there from model-server.py!"}
 
 # Wrapper for baseline model to mimic sklearn.
 class MajorityClassPredictor:
@@ -42,27 +42,31 @@ def load_models(champ_namespace=None, challenger_namespace=None):
     global challenger_cols
 
     # Set up champ.
-    namespace(champ_namespace)
-    run = Flow(FLOW_NAME).latest_successful_run
-    model_type = run.data.model_type
+    if champ_namespace is not None:
+        # Get last run
+        namespace(champ_namespace)
+        run = Flow(FLOW_NAME).latest_successful_run
 
-    if model_type == 'baseline':
-        champ = MajorityClassPredictor()
-        champ_cols = None
+        # Check model type
+        model_type = run.data.model_type
+        if model_type == 'baseline':
+            champ = MajorityClassPredictor()
+            champ_cols = None
 
-    elif model_type == 'xgboost':
-        champ = run.data.model
-        champ_cols = list(run.data.cols)
+        elif model_type == 'xgboost':
+            champ = run.data.model
+            champ_cols = list(run.data.cols)
 
-    msg = f'Running {model_type} model as champion.'
+        msg = f'Running {model_type} model as champion.'
 
     # Set up challenger.
     if challenger_namespace is not None:
-
+        # Get last run
         namespace(challenger_namespace)
         run = Flow(FLOW_NAME).latest_successful_run
-        model_type = run.data.model_type
 
+        # Check model type
+        model_type = run.data.model_type
         if model_type == 'baseline':
             challenger = MajorityClassPredictor()
             challenger_cols = None
@@ -84,7 +88,6 @@ def get_pred(data, which_model=None):
     features, _ = featurize(pd.read_json(data))
 
     if which_model is None:
-        
         print("No model selected, randomly selected one with 4/5 chance of using champion.")
 
         if np.random.random() > 0.2: # send 80% of traffic to champ, 20% to challenger
