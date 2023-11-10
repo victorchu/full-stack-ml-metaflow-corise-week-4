@@ -51,8 +51,16 @@ class TaxiFarePrediction(FlowSpec):
 
         # Fit the model with all of the data
         self.model.fit(self.X, self.y)
+
+        # Cards
+        current.card.append(Markdown("# Taxi Fare Prediction Results"))
+        current.card.append(Artifact(self.model_type, name="model_type"))
+        current.card.append(Artifact(self.model, name="model"))
+        current.card.append(Artifact(self.scores, name="scores"))
+
         self.next(self.end)
 
+    @card  # Default card
     @step
     def end(self):
         print("Success!")

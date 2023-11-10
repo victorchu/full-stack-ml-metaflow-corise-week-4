@@ -47,10 +47,20 @@ class TaxiFarePrediction(FlowSpec):
     @step
     def validate(self):
         from sklearn.model_selection import cross_val_score
+        # Get CV scores
         self.scores = cross_val_score(self.model, self.X, self.y, cv=5)
+        # We still need to fit the model
         self.model.fit(self.X, self.y)
+
+        # Cards
+        current.card.append(Markdown("# Taxi Fare Prediction Results"))
+        current.card.append(Artifact(self.model_type, name="model_type"))
+        current.card.append(Artifact(self.model, name="model"))
+        current.card.append(Artifact(self.scores, name="scores"))
+        
         self.next(self.end)
 
+    @card
     @step
     def end(self):
         print("Success!")
