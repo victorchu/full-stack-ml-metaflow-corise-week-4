@@ -56,11 +56,11 @@ class TaxiFarePrediction(FlowSpec):
         current.card.append(Markdown("# Taxi Fare Prediction Results"))
         current.card.append(Artifact(self.model_type, name="model_type"))
         current.card.append(Artifact(self.model, name="model"))
-        current.card.append(Artifact(self.scores, name="scores"))
-        
+        current.card.append(Artifact(self.scores, name="CV scores"))
+
         self.next(self.end)
 
-    @card
+    # @card
     @step
     def end(self):
         print("Success!")
